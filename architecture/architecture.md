@@ -30,5 +30,52 @@ Data feeds (fourCornersfusedRadarDetections, fusedFrontRadarsDetections, fusedRa
 - **B-spline boundary**: The segmented ring is resampled into control points, optionally smoothed with SPLINTER, and sampled to produce a continuous boundary. Sliders allow the operator to edit the number of control points/samples to balance smoothness vs. fidelity.
 - This two-pronged mapping emphasizes free space, not occupancy, and keeps all math in VCS, sidestepping ISO-to-VCS drift by converting the vehicle contour once at startup.
 
-## 5. Architecture diagram (enhanced)
-- The architecture diagram (see `architecture/visual/architecture.png`) distills the modules above: sensors → engine → mapping → visualizer. Key data paths are annotated with frame names (VCS for calculus, ISO for contour) and the diagram spotlights the segment map + B-spline pipeline.
+## 5. Architecture layout (tree view)
+The repository is organized into logical layers similar to the sample tree structure you referenced. The ASCII tree below highlights where the engine, mapping, visualizer, tests, and assets live:
+
+```
+RadarProcessor/
+├─ architecture/
+│  ├─ architecture.md           # This document
+│  └─ visual/architecture.png   # Diagram referenced earlier
+├─ assets/
+│  ├─ implot/                   # ImPlot helper used by the visualizer
+│  └─ inireader/                # IniFileParser library (now assets/inireader)
+├─ data/                        # Radar text captures plus INI configs
+├─ radar/
+│  ├─ include/
+│  │  ├─ config/                # VehicleProfile API
+│  │  ├─ engine/                # RadarEngine + playback engine
+│  │  ├─ logging/
+│  │  ├─ mapping/               # FusedRadarMapping + RadarVirtualSensorMapping APIs
+│  │  ├─ processing/            # RadarPlayback
+│  │  └─ sensors/                # BaseRadarSensor + factories
+│  └─ src/
+│     ├─ config/
+│     ├─ engine/
+│     ├─ logging/
+│     ├─ mapping/
+│     ├─ processing/
+│     └─ sensors/
+├─ radar_core/                  # Odometry estimator + processing pipeline
+├─ utility/                     # VehicleConfig, common math, radar types
+├─ visualization/               # RadarVisualizer, Shader, imgui.ini
+├─ splinter/                    # Embedded spline helper (builder + data)
+├─ bindings/                    # ImGui platform/render bindings
+├─ shaders/                     # point shader pair
+├─ test/                        # GoogleTest suites + test helpers
+├─ run_debug.bat
+├─ run_release.bat
+├─ CMakeLists.txt
+├─ conanfile.py
+├─ README.md
+├─ .gitignore
+└─ build/                       # (ignored) cmake/conan artifacts
+```
+
+Each major folder corresponds with a layer in the data flow diagram:
+1. `radar/` contains the playback and sensor loop, plus logging/config parsing.
+2. `radar_core/` supplies processing helpers (odometry, association) and is used by the playback pipeline.
+3. `visualization/` renders radar points, map segments, spline boundaries, and provides ImGui controls.
+4. `test/` verifies the full stack (mapping, sensors, playback, engine).
+5. `utility/`, `assets/`, and `splinter/` provide shared helpers for parsing, math utilities, and spline smoothing.
