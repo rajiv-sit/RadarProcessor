@@ -34,6 +34,9 @@ RadarProcessor is an offline radar replay and inspection framework that mirrors 
   - **Tracks**: polygonal tracks with color-coded motion state.
   - **Segment map**: radial lines drawn from the vehicle contour to each segment endpoint (updated every frame from `RadarVirtualSensorMapping`).
   - **B-spline boundary**: optional smooth boundary built from the same segments when `Show B-spline map` is checked.
+  ![Fig 1: Detection and track visualization](docs/figures/detections_tracks.png)
+  ![Fig 2: Radial segment map](docs/figures/segment_map.png)
+  ![Fig 3: B-spline free-space map](docs/figures/bspline_map.png)
 - ImGui controls let you adjust:
   - Point size, intensity scale, replay speed.
   - Map visibility toggles (segments, spline, vehicle contour).
